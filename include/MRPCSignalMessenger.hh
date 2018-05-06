@@ -7,7 +7,7 @@ class MRPCSignal;
 class G4UIdirectory;
 class G4UIcmdWithADouble;
 class G4UIcmdWithAnInteger;
-
+class G4UIcmdWithAString;
 class MRPCSignalMessenger:public G4UImessenger
 {
 public:
@@ -21,5 +21,6 @@ private:
   G4UIdirectory*           fSigDirectory;
   G4UIcmdWithADouble* fAverageIonEnergyCmd,*fThresholdCmd,*fNoiseCmd,*fPointStepCmd,*fTau1Cmd,*fTau2Cmd,*fAmplitudeCmd,*fRealVoltageCmd;
   G4UIcmdWithAnInteger *fNbofstepsInAGapCmd,*fNbofPointAroundThreCmd,*fDrawPlotCmd;
+  G4UIcmdWithAString* fGastypeCmd;
 };
 #endif

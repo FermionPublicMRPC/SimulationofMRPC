@@ -63,6 +63,7 @@ MRPCSignal::MRPCSignal()
   Tau1=0.5;Tau2=1.5;Amplitude=45;
   DrawPlot=false;
   NbofpointAboveThreshold=0;
+  GasMix="Standard";
 }
 
 MRPCSignal::~MRPCSignal()
@@ -144,20 +145,17 @@ bool MRPCSignal::CalculateSignal(MRPCTrackerHitsCollection* hitsCollection){
   TruthTime=9999;
   for(G4int itr=0;itr<nentries;itr++){
 	 G4double primaryelectrons=round((*hitsCollection)[itr]->GetEdep()/AverageIonEnergy);//get int from double, used as round
-	 // G4cout<<"hits "<<itr<<" prepos "<<(*hitsCollection)[itr]->GetPrePosWithRespectToStrip().z()<<" postpos "<<(*hitsCollection)[itr]->GetPostPos().z()-(*hitsCollection)[itr]->GetPrePos().z()+(*hitsCollection)[itr]->GetPrePosWithRespectToStrip().z()<<" ene "<<primaryelectrons<<" gapID "<<(*hitsCollection)[itr]->GetGapID()<<" trackID "<<(*hitsCollection)[itr]->GetTrackID()<<G4endl;
 
     if(primaryelectrons==0) continue;
     if(TruthTime>9990) TruthTime=(*hitsCollection)[itr]->GetLocalDepTime();
     Avalanche((*hitsCollection)[itr]->GetGapID(),(*hitsCollection)[itr]->GetPrePosWithRespectToStrip(),(*hitsCollection)[itr]->GetLocalDepTime()-TruthTime,primaryelectrons);
   }
-  //Iwitht=CalculateCurrent(Nwitht)
+ 
   CalculateCurrent(); //Get the original current waveform(from)
-  //Iwitht=ElectronicsResponse(Iwitht)
+
   ElectronicsResponse();//Add electronics response to the original current.
   //ToT,threshold crosing time=ElectronicsResponse(Iwitht)
   CalculateToT();//Calculate the ToT and judge whether the signal is overthreshold 
-  //waveform=CalculateWaveForm(Iwitht)
-//  if(OverThreshold) 
   CalculateWaveForm(); //calculate the waveform.
   return OverThreshold;
 }
@@ -172,14 +170,7 @@ void MRPCSignal::CalculateCurrent(){
   // TPad *pad2 = new TPad("pad1","",0,0,1,1);
   c1->Divide(2);
   c1->cd(1);
-  // pad1->Draw();
-  // pad1->cd();
   NbWithTime->Draw();
-  // pad1->Update();
-  // TPaveStats *ps1 = (TPaveStats*)NbWithTime->GetListOfFunctions()->FindObject("stats"); 
-  // ps1->SetX1NDC(0.1); ps1->SetX2NDC(0.4);
-  // ps1->SetY1NDC(0.7); ps1->SetY2NDC(0.9);
-  // pad1->Modified();
   NbWithTime->GetXaxis()->SetTitle("Time /ns");
   NbWithTime->GetYaxis()->SetTitle("#electrons");
   NbWithTime->GetXaxis()->SetTitleSize(0.04);
@@ -187,25 +178,16 @@ void MRPCSignal::CalculateCurrent(){
   NbWithTime->GetYaxis()->SetTitleSize(0.04);
   NbWithTime->GetYaxis()->SetLabelSize(0.04);
   NbWithTime->GetYaxis()->SetTitleOffset(1.2);
-  // NbWithTime->GetXaxis()->CenterTitle();
   c1->cd(2);
-  // pad2->Draw();
-  // pad2->cd();
   IWithTime->GetXaxis()->SetTitle("Time /ns");
-  // IWithTime->GetXaxis()->CenterTitle();
   IWithTime->GetYaxis()->SetTitle("Current /mA");
-  // IWithTime->GetYaxis()->CenterTitle();
   IWithTime->GetXaxis()->SetTitleSize(0.04);
   IWithTime->GetXaxis()->SetLabelSize(0.04);
   IWithTime->GetYaxis()->SetTitleSize(0.04);
   IWithTime->GetYaxis()->SetLabelSize(0.04);
   IWithTime->Draw();
   IWithTime->GetYaxis()->SetTitleOffset(1.2);
-  // pad2->Update();
-  // ps1 = (TPaveStats*)IWithTime->GetListOfFunctions()->FindObject("stats"); 
-  // ps1->SetX1NDC(0.1); ps1->SetX2NDC(0.4);
-  // ps1->SetY1NDC(0.7); ps1->SetY2NDC(0.9);
-  // pad2->Modified();
+
   c1->Update();
   TString name;
   TFile *outfile=new TFile("OriginalSignal"+name.Format("%.0f",(TruthTime+gRandom->Uniform()*10)*1000)+".root","recreate");
@@ -234,7 +216,6 @@ void MRPCSignal::ElectronicsResponse(){
     for(G4int i=ilow;i<ihigh;i++)
       tmp+=IWithTime->GetBinContent(i)*ElectronicsResponseFunction(electronichist->GetBinCenter(k-i));
     ResponseIWithTime->SetBinContent(k,tmp);
-    // if(k>12&&k<18) G4cout<<"time "<<ResponseIWithTime->GetBinCenter(k)<<" y "<<ResponseIWithTime->GetBinContent(k)<<" time "<<IWithTime->GetBinCenter(k)<<" y "<<IWithTime->GetBinContent(k)<<G4endl;
   }
   electronichist->Clear();
   Peak = FindHistPeakValue(ResponseIWithTime);
@@ -331,13 +312,16 @@ void MRPCSignal::CalculateWaveForm(){
   gRandom->SetSeed();
   G4int randomtime=Peak.first+round(gRandom->Uniform(-PointStep/2,PointStep/2));
   ExperimentsPeakTime=ResponseIWithTime->GetBinCenter(randomtime);
-  G4int flag=0;
-    PointTimeStep=ResponseIWithTime->GetBinCenter(randomtime-PointStep)-ResponseIWithTime->GetBinCenter(randomtime-2*PointStep);
-    // G4cout<<PointTimeStep<<G4endl;
+  // G4cout<<"startrandom time= "<<randomtime<<" Pointstep= "<<PointStep<<G4endl;
+  PointTimeStep=ResponseIWithTime->GetBinCenter(randomtime-PointStep)-ResponseIWithTime->GetBinCenter(randomtime-2*PointStep);
+  // for(Int_t i=0;i<PointStep*10;i++)
+  // 	 G4cout<<Peak.first-i<<" "<<ResponseIWithTime->GetBinContent(Peak.first-i)<<G4endl;;
+	 
   //from the peak to the start point
   for(Int_t bini=0;bini<NbofPointAroundThre;bini++){
     // if(ResponseIWithTime->GetBinCenter(randomtime-bini*PointStep)<TruthTime) break;
     Double_t tmpy=ResponseIWithTime->GetBinContent(randomtime-bini*PointStep);
+	 // G4cout<<randomtime-bini*PointStep<<" "<<tmpy<<G4endl;
     //if(tmpy<4e-5) break;
     InducedQAroundThre.push_back(tmpy+gRandom->Gaus(0,NoisePer*WaveMaxValue));
   }
@@ -548,10 +532,12 @@ G4double MRPCSignal::ElectronicsResponseFunction(G4double x){
 bool MRPCSignal::ResetGasParameter(G4double electricField){
   electricField=10.*electricField;
   G4int totalNboftxtline=48;
-  TString title;
+  TString title,infilename;
   G4double tmpfield,tmpalpha,tmpeta,tmpvelocity,readtmp;
   std::ifstream in;
-  in.open("GasData.txt");
+  if(GasMix=="Standard") infilename="GasData.txt";
+  else infilename="GasData955.txt";
+  in.open(infilename);
   in>>title>>title>>title>>title;
   for(G4int linei=0;linei<totalNboftxtline;linei++){
     in>>readtmp;  

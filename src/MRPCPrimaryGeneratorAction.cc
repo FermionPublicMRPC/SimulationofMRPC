@@ -1,4 +1,3 @@
-
 #include "MRPCPrimaryGeneratorAction.hh"
 #include "MRPCPrimaryGeneratorActionMessenger.hh"
 #include "G4Event.hh"
@@ -15,15 +14,9 @@ MRPCPrimaryGeneratorAction::MRPCPrimaryGeneratorAction()
 {
   G4int n_particle = 1;
   particleGun = new G4ParticleGun(n_particle);
-
-  G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-  G4String particleName;
-  particleGun->SetParticleDefinition(particleTable->FindParticle(particleName="mu-"));
-  // particleGun->SetParticleEnergy(2*GeV);
-
+  ParticleType="mu-Cosmic";
+  Energy=-10;Momentum=-10;
   m_primarygenMessenger= new MRPCPrimaryGeneratorActionMessenger(this); 
-  GunPos= G4ThreeVector(0,0,10*mm);
-  GunDir= G4ThreeVector(0,0,-1);
  
 }
 
@@ -32,20 +25,35 @@ MRPCPrimaryGeneratorAction::~MRPCPrimaryGeneratorAction()
   delete particleGun;
 }
 
-void MRPCPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
-{
-  G4double sourceposx,sourceposy,sourceposz,endposx,endposy,endposz,muEnergy,cosTheta;
-  sourceposy=0;
-  sourceposz=30;
-  sourceposx=gRandom->Uniform(-20,20);
-  endposy=0;
-  endposz=-30;
-  endposx=gRandom->Uniform(-20,20);
-  muEnergy=gRandom->Gaus(4,0.5);
-  particleGun->SetParticleEnergy(muEnergy *GeV);
-  
-  particleGun->SetParticlePosition(G4ThreeVector(sourceposx *mm,sourceposy *mm,sourceposz *mm));
-  particleGun->SetParticleMomentumDirection(G4ThreeVector(endposx-sourceposx,endposy-sourceposy,endposz-sourceposz));
+void MRPCPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent){
+  G4String particleName;
+  G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+  if(ParticleType!="mu-Cosmic"){//Not Cosmic ray
+	 particleGun->SetParticleDefinition(particleTable->FindParticle(particleName=ParticleType));
+	 if(Energy>0)
+		particleGun->SetParticleEnergy(Energy*GeV);//kineticEnergy
+	 else if(Momentum>0){
+		G4double mass=particleGun->GetParticleDefinition()->GetPDGMass();
+		particleGun->SetParticleEnergy(sqrt(pow(mass,2)+pow(Momentum,2))-mass);//Momentum*MeV);
+	 }
+	 else G4cout<<"Please assign particle energy!"<<G4endl;
+	 particleGun->SetParticlePosition(GunPos);
+	 particleGun->SetParticleMomentumDirection(GunDir);
+  }
+  else{//Cosmic ray
+	 G4double sourceposx,sourceposy,sourceposz,endposx,endposy,endposz,muEnergy,cosTheta;
+	 sourceposy=0;
+	 sourceposz=30;
+	 sourceposx=gRandom->Uniform(-20,20);
+	 endposy=0;
+	 endposz=-30;
+	 endposx=gRandom->Uniform(-20,20);
+	 muEnergy=gRandom->Gaus(4,0.5);
+	 particleGun->SetParticleDefinition(particleTable->FindParticle(particleName="mu-"));
+	 particleGun->SetParticlePosition(G4ThreeVector(sourceposx *mm,sourceposy *mm,sourceposz *mm));
+	 particleGun->SetParticleEnergy(muEnergy *GeV);
+	 particleGun->SetParticleMomentumDirection(G4ThreeVector(endposx-sourceposx,endposy-sourceposy,endposz-sourceposz));
+  }
   particleGun->GeneratePrimaryVertex(anEvent);
 }
   // gRandom->SetSeed();

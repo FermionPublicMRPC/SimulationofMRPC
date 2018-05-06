@@ -3,7 +3,7 @@
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithADouble.hh"
 #include "G4UIcmdWithAnInteger.hh"
-
+#include "G4UIcmdWithAString.hh"
 MRPCSignalMessenger::MRPCSignalMessenger(MRPCSignal *sig)
   : G4UImessenger(),
     fSignal(sig)
@@ -23,6 +23,11 @@ MRPCSignalMessenger::MRPCSignalMessenger(MRPCSignal *sig)
   // fEtaCmd->SetGuidance("Define Eta");
   // fEtaCmd->SetParameterName("Eta",false);
   // fEtaCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+  fGastypeCmd = new G4UIcmdWithAString("/MRPC/sig/whichgasmixture",this);
+  fGastypeCmd->SetGuidance("Define Gastype");
+  fGastypeCmd->SetParameterName("Gastype",true);
+  fGastypeCmd->SetDefaultValue("Standard");
+  fGastypeCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
   fAverageIonEnergyCmd = new G4UIcmdWithADouble("/MRPC/sig/AverageIonEnergy",this);
   fAverageIonEnergyCmd->SetGuidance("Define AverageIonEnergy");
@@ -101,11 +106,13 @@ MRPCSignalMessenger::~MRPCSignalMessenger()
   delete fNoiseCmd;
   delete fPointStepCmd;
   delete fRealVoltageCmd;
+  delete fGastypeCmd;
 }
 
 
 void MRPCSignalMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 {
+  if(command == fGastypeCmd) fSignal->SetGasMixture(newValue);
   if(command == fAverageIonEnergyCmd) fSignal->SetAverageIonEnergy(fAverageIonEnergyCmd->GetNewDoubleValue(newValue));
   if(command == fNbofstepsInAGapCmd) fSignal->SetNbofstepsInAGap(fNbofstepsInAGapCmd->GetNewIntValue(newValue));
   if(command == fNbofPointAroundThreCmd) fSignal->SetNbofPointAroundThre(fNbofPointAroundThreCmd->GetNewIntValue(newValue));

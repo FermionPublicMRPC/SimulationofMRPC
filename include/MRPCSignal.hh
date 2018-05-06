@@ -24,7 +24,7 @@ public:
   void SetAmplitude(G4double value){Amplitude=value;};
   void SetDrawPlot(G4int value){if(value==0) DrawPlot=false;else DrawPlot=true;};
   void SetRealVoltage(G4double value){RealVoltage=value;};
-
+  void SetGasMixture(G4String value){GasMix=value;};
 
   bool IfSignalOverThreshold(){return OverThreshold;}
   TH1D* GetNbWithTime(){return NbWithTime;};
@@ -80,5 +80,6 @@ private:
   std::pair<G4int,G4int> Peak;
   TH1D* Nbofpointshist,*peakchargehist;
   G4double Tau1,Tau2,Amplitude,PointTimeStep;
+  G4String GasMix;
 };
 #endif

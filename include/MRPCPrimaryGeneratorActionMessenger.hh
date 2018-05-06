@@ -1,13 +1,13 @@
 #ifndef MRPCPrimaryGeneratorActionMessenger_h
 #define MRPCPrimaryGeneratorActionMessenger_h 1
 
-
 #include "G4UImessenger.hh"
 class MRPCPrimaryGeneratorAction;
 class G4UIdirectory;
 class G4UIcmdWith3VectorAndUnit;
 class G4UIcmdWithADouble;
- 
+class G4UIcmdWithAString;
+
 class MRPCPrimaryGeneratorActionMessenger: public G4UImessenger
 {
 public:
@@ -19,6 +19,11 @@ private:
   G4UIdirectory* fMRPCDirectory,*fGeneDirectory;
   G4UIcmdWith3VectorAndUnit* fGunPosCmd,*fGunDirCmd;
   MRPCPrimaryGeneratorAction* fPrimaryGenerator;
+  G4UIcmdWithAString* fBeamtypeCmd;
+  G4UIcmdWithADouble* fBeamenergyCmd,*fBeammomentumCmd;
+
+
+  
 };
 #endif
 

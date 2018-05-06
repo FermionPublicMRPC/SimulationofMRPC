@@ -14,12 +14,17 @@ class MRPCPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
     ~MRPCPrimaryGeneratorAction();
     void SetGunPos(G4ThreeVector value) {GunPos=value;};
     void SetGunDir(G4ThreeVector value) {GunDir=value;};
+    void SetParticleType(G4String value) {ParticleType=value;};
+    void SetParticleEnergy(G4double value) {Energy=value;};
+    void SetParticleMomentum(G4double value) {Momentum=value;};
   
     void GeneratePrimaries(G4Event* anEvent);
 
   private:
     G4ParticleGun* particleGun;
     G4ThreeVector GunPos,GunDir;
+    G4String ParticleType;
+    G4double Energy,Momentum;
     MRPCPrimaryGeneratorActionMessenger* m_primarygenMessenger;
 };
 

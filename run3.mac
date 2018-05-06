@@ -2,17 +2,17 @@
 /event/verbose 0
 /tracking/verbose 0
 
-/MRPC/det/Gapsize 100 100 0.104 mm
-/MRPC/det/Glasssize 100 100 0.5 mm
-/MRPC/det/Honeysize 100 100 7.5 mm
-/MRPC/det/PCBsize 100 100 1.2 mm
+/MRPC/det/Gapsize 100 100 .25 mm
+/MRPC/det/Glasssize 100 100 0.7 mm
+/MRPC/det/Honeysize 100 100 6 mm
+/MRPC/det/PCBsize 100 100 0.8 mm
 /MRPC/det/Mylarsize 100 100 0.25 mm
-/MRPC/det/NumberOfChamber 4
-/MRPC/det/NumberOfGapinAChamber 8
+/MRPC/det/NumberOfChamber 2
+/MRPC/det/NumberOfGapinAChamber 4
 /MRPC/det/StepMax 0.05 mm
 /MRPC/det/PitchWidth 10 mm
 
-/MRPC/dig/Geosize 8 0.5 0.104 mm
+/MRPC/dig/Geosize 4 0.7 .25 mm
 #Nbofgap Platethickness gapthickness
 /MRPC/Phy/Physics pai
 
@@ -24,15 +24,15 @@
 #/MRPC/sig/whichgasmixture gas1
 /MRPC/sig/AverageIonEnergy 30.e-6 #MeV
 /MRPC/sig/NbofstepsInAGap 300
-/MRPC/sig/NbofPointAroundThre 15
-/MRPC/sig/ThresholdPer 0.07
-/MRPC/sig/NoisePer 0.005
-/MRPC/sig/Tau1 1.58
-/MRPC/sig/Tau2 1.7
-/MRPC/sig/Amplitude 11
-/MRPC/sig/DrawPlot 0
-/MRPC/sig/TimeIntervalAroundThre 200 #ps
-/MRPC/sig/RealVoltage 5.5 #kV
+/MRPC/sig/NbofPointAroundThre 18
+/MRPC/sig/ThresholdPer 0.20
+/MRPC/sig/NoisePer 0.08
+/MRPC/sig/Tau1 0.15
+/MRPC/sig/Tau2 1.
+/MRPC/sig/Amplitude 2.5
+/MRPC/sig/DrawPlot 0 
+/MRPC/sig/TimeIntervalAroundThre 110 #ps
+/MRPC/sig/RealVoltage 5.3 #kV
 
 /run/initialize
 /MRPC/det/update
@@ -42,4 +42,4 @@
 
 #/gun/particle mu-
 #/gun/energy 4 GeV
-/run/beamOn 1000
+/run/beamOn 1

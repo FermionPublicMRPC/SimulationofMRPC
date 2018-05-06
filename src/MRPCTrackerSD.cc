@@ -66,7 +66,7 @@ G4bool MRPCTrackerSD::ProcessHits(G4Step * aStep, G4TouchableHistory *)
   if ( aTrack->GetTrackID() == 1 && ! firstStrikePrimary ) {
     _kinEPrimary = aTrack->GetKineticEnergy()/keV;
     _kinEPrimary -= (aStep->GetDeltaEnergy()/keV);
-    // G4cout<<aTrack->GetKineticEnergy()/keV<<" delta "<<aStep->GetDeltaEnergy()/keV<<endl;
+    // G4cout<<aTrack->GetKineticEnergy()<<" momentum "<<aTrack->GetMomentum()<<endl;
     firstStrikePrimary = true;
 	 // G4cout<<"particle "<<aTrack->GetDefinition()->GetParticleName()<<" momentum "<<aTrack->GetMomentum()<<G4endl;
   }
