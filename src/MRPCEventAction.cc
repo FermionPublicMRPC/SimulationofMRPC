@@ -38,15 +38,29 @@ void MRPCEventAction::BeginOfEventAction(const G4Event* evt)
  
 void MRPCEventAction::EndOfEventAction(const G4Event* evt)
 {
-  myDM->Digitize();
-  MRPCDigitsCollection* digitsCollection=myDM->GetDigitsCollection();
-
-  G4DigiManager * digiMan = G4DigiManager::GetDMpointer();
-  G4int hcID = digiMan->GetHitsCollectionID(m_hitsColName);
-  MRPCTrackerHitsCollection* hitsCollection = (MRPCTrackerHitsCollection*)(digiMan->GetHitsCollection(hcID));
-  recorder->RecordHitinROOT(hitsCollection);
-  recorder->RecordDigitinROOT(digitsCollection);
-  // MRPCSigi* mySigi=CalculateSignal(hitsCollection);
+  G4int recordflag;
+  recordflag=recorder->GetRecordFlag();
+  if(recordflag==4) recordflag=recordflag;//do nothing
+  else if(recordflag==1){//digit
+	 myDM->Digitize();
+	 MRPCDigitsCollection* digitsCollection=myDM->GetDigitsCollection();
+	 recorder->RecordDigitinROOT(digitsCollection);
+  }
+  else if(recordflag==2){//hits
+	 G4DigiManager * digiMan = G4DigiManager::GetDMpointer();
+	 G4int hcID = digiMan->GetHitsCollectionID(m_hitsColName);
+	 MRPCTrackerHitsCollection* hitsCollection = (MRPCTrackerHitsCollection*)(digiMan->GetHitsCollection(hcID));
+	 recorder->RecordHitinROOT(hitsCollection);
+  }
+  else{
+	 myDM->Digitize();
+	 MRPCDigitsCollection* digitsCollection=myDM->GetDigitsCollection();
+	 recorder->RecordDigitinROOT(digitsCollection);
+	 G4DigiManager * digiMan = G4DigiManager::GetDMpointer();
+	 G4int hcID = digiMan->GetHitsCollectionID(m_hitsColName);
+	 MRPCTrackerHitsCollection* hitsCollection = (MRPCTrackerHitsCollection*)(digiMan->GetHitsCollection(hcID));
+	 recorder->RecordHitinROOT(hitsCollection);
+  }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

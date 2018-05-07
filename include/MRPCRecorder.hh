@@ -23,7 +23,7 @@ public:
   void RecordDigitinROOT(MRPCDigitsCollection* digitsCollection);
   void SetRecordFlag(G4int value){recordflag=value;};
   void WriteCloseROOTFile();
-
+  G4int GetRecordFlag(){return recordflag;};
 private:
   void SetupTreeForDigit();
   void SetupTreeForHit();

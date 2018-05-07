@@ -6,7 +6,6 @@
 MRPCRecorder::MRPCRecorder()
 {
   recordflag=2;
-  // doBichsel=false;
   m_recorderMessenger=new MRPCRecorderMessenger(this);
  
 }
@@ -15,6 +14,7 @@ MRPCRecorder::~MRPCRecorder()
 {
   delete m_recorderMessenger;
 }
+
 void MRPCRecorder::SetupWriteFile(){
   if(recordflag==4) G4cout<<"No Output"<<G4endl;//doNothing
   else{
