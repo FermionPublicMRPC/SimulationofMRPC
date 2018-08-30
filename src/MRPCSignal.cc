@@ -334,8 +334,9 @@ void MRPCSignal::CalculateWaveForm(){
 void MRPCSignal::Avalanche(G4int gapID, G4ThreeVector PosWithRespectToStrip,G4double StartTime,G4int PrimaryElectrons){
   //Iterarion
   G4double timetoelectrode;
-  if(gapID%2==0) timetoelectrode=(Gapsize.z()+PosWithRespectToStrip.z())/Velocity;//-PosWithRespectToStrip.z()/Velocity;///
-  else timetoelectrode=-PosWithRespectToStrip.z()/Velocity;
+  // if(gapID%2==0) timetoelectrode=(Gapsize.z()+PosWithRespectToStrip.z())/Velocity;//-PosWithRespectToStrip.z()/Velocity;///
+  // else timetoelectrode=-PosWithRespectToStrip.z()/Velocity;
+  timetoelectrode=(Gapsize.z()+PosWithRespectToStrip.z())/Velocity;
   // G4cout<<Gapsize.z()+PosWithRespectToStrip.z()<<G4endl;
   // G4cout<<PosWithRespectToStrip.z()<<" "<<PrimaryElectrons<<G4endl;
   G4int totalNbofstep=MaxScale*(timetoelectrode/TimeStep);
@@ -464,7 +465,7 @@ G4int MRPCSignal::GetLeadingNbofPoints(TH1D* hist,G4double percentofMax,std::pai
 std::pair<G4int,G4double> MRPCSignal::FindHistPeakValue(TH1D* hist){
   std::pair<G4int,G4int> maxtime=std::make_pair(0,hist->GetNbinsX()*3.5/4.);
   // std::cout<<"first "<<maxtime.first<<" second "<<maxtime.second<<std::endl;
-  while((maxtime.second-maxtime.first)>4){
+  while((maxtime.second-maxtime.first)>2){
     G4int step=(G4int)TMath::Max(1.,0.0001*(maxtime.second-maxtime.first));
     maxtime=FindWavePeak(maxtime,step,hist);
   }

@@ -59,6 +59,8 @@ set(mrpc_SCRIPTS
    run1.mac
     run2.mac
    GasData.txt
+   run3.mac
+   GasData955.txt
     )
 
 foreach(_script ${mrpc_SCRIPTS})
