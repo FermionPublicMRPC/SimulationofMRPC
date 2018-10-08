@@ -18,7 +18,7 @@ MRPCRecorder::~MRPCRecorder()
 void MRPCRecorder::SetupWriteFile(){
   if(recordflag==4) G4cout<<"No Output"<<G4endl;//doNothing
   else{
-    outfile = new TFile("GeantData.root","RECREATE");
+    outfile = new TFile(OutFilename,"RECREATE");
     if(recordflag==1){
       G4cout<<"Will record DigitsCollection"<<G4endl;
       SetupTreeForDigit();

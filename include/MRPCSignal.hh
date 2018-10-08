@@ -42,9 +42,15 @@ public:
   std::vector<G4double > GetInducedQAroundThre(){return InducedQAroundThre;};
   bool CalculateSignal(MRPCTrackerHitsCollection* hitsCollection);
 
+  void SetUncertaintyEnergyFlag(bool value){EnergyFlag=value;};
+  void SetUncertaintyLongPosFlag(bool value){LongPosFlag=value;};
+  void SetUncertaintyAvalancheFlag(bool value){AvalancheFlag=value;};
+  void SetUncertaintyWeightingFieldFlag(bool value){WeightingFieldFlag=value;};
+  void SetUncertaintyValue(G4ThreeVector value){FixedTotalEnergy=value.x();FixedNbofstep=value.y();};
 
 private:
-  void Avalanche(G4int gapID,G4ThreeVector PosWithRespectToStrip,G4double StartTime,G4int PrimaryElectrons); 
+  void Avalanche(G4int gapID,G4ThreeVector PosWithRespectToStrip,G4double StartTime,G4int PrimaryElectrons);
+  void AvalancheWithoutUncertainty(G4double posz,G4double StartTime,G4int PrimaryElectrons);
   void CalculateCurrent();
   void ElectronicsResponse();
   void CalculateToT();
@@ -65,14 +71,14 @@ private:
   MRPCSignalMessenger* m_signalMessenger;
   G4ThreeVector Gapsize;
   G4double TimeCrossGap,MaxScale,ZStep,TimeStep;
-  G4double AverageIonEnergy,pi,elec;
+  G4double AverageIonEnergy,pi,elec,LightSpeed;
   G4double Alpha,Eta,EffAlpha,TownsendK;
   G4double RealVoltage,E,WeightE,Velocity,SpaceChargeThre,DiffLengthZ,DiffSigMaxScale,RelativePermittivity;
   G4double ThresholdPer,NoisePer,StartTimeOffset;
   G4double LeadTime,TotalInducedQ,TruthTime,ToT,ExperimentsPeakTime;
-  G4double WaveMaxValue;
+  G4double WaveMaxValue,FixedTotalEnergy,FixedNbofstep;
   G4int Nbofsteps,NbofPointAroundThre;
-  bool doDiff,OverThreshold,DrawPlot;
+  bool doDiff,OverThreshold,DrawPlot,EnergyFlag,LongPosFlag,AvalancheFlag,WeightingFieldFlag;;
   bool dogap[5];
   std::vector<G4double > InducedQAroundThre;
   G4int PointStep,CountNbofPointsOverThre,NbofpointAboveThreshold;

@@ -22,6 +22,7 @@ public:
   void RecordHitinROOT(MRPCTrackerHitsCollection* hitsCollection);
   void RecordDigitinROOT(MRPCDigitsCollection* digitsCollection);
   void SetRecordFlag(G4int value){recordflag=value;};
+  void SetOurFilename(G4String value){OutFilename=value;};
   void WriteCloseROOTFile();
   G4int GetRecordFlag(){return recordflag;};
 private:
@@ -40,6 +41,7 @@ private:
   bool overthre;
   MRPCRecorderMessenger* m_recorderMessenger;
   TH2D *Walk;
+  G4String OutFilename;
 };
 
 #endif

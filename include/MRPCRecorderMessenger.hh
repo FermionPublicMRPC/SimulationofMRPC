@@ -6,6 +6,7 @@ class G4UIcmdWithABool;
 class G4UIdirectory;
 class MRPCRecorder;
 class G4UIcmdWithAnInteger;
+class G4UIcmdWithAString;
 
 class MRPCRecorderMessenger: public G4UImessenger
 {
@@ -19,6 +20,7 @@ private:
   G4UIdirectory*           fMRPCDirectory;
   G4UIdirectory*           fRecDirectory;
   G4UIcmdWithAnInteger*    fWriteCmd;
+  G4UIcmdWithAString*      fFilenameCmd;
 
 };
 #endif

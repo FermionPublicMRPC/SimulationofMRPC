@@ -127,9 +127,9 @@ G4bool MRPCTrackerSD::ProcessHits(G4Step * aStep, G4TouchableHistory *)
   newHit->SetParentVolumeName(aTrack->GetLogicalVolumeAtVertex()->GetName());
  
   hitsCollection->insert(newHit);
-  if ( _totalEdep > _kinEPrimary ) {
-    cout << "[WARNING] totalEdep = " << _totalEdep << ", kinEPrimary = " << _kinEPrimary << endl;
-  }
+  // if ( _totalEdep > _kinEPrimary ) {
+  //   cout << "[WARNING] totalEdep = " << _totalEdep << ", kinEPrimary = " << _kinEPrimary << endl;
+  // }
   return true;
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

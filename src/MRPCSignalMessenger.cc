@@ -4,6 +4,8 @@
 #include "G4UIcmdWithADouble.hh"
 #include "G4UIcmdWithAnInteger.hh"
 #include "G4UIcmdWithAString.hh"
+#include "G4UIcmdWithABool.hh"
+#include "G4UIcmdWith3VectorAndUnit.hh"
 MRPCSignalMessenger::MRPCSignalMessenger(MRPCSignal *sig)
   : G4UImessenger(),
     fSignal(sig)
@@ -88,6 +90,38 @@ MRPCSignalMessenger::MRPCSignalMessenger(MRPCSignal *sig)
   fRealVoltageCmd->SetGuidance("Define RealVoltage");
   fRealVoltageCmd->SetParameterName("RealVoltage",false);
   fRealVoltageCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+  
+  fEnergyCmd = new G4UIcmdWithABool("/MRPC/sig/PrimaryEnergyUncertainty",this);
+  fEnergyCmd->SetGuidance("Whether to consider the uncertainty of the primarty energy depo");
+  fEnergyCmd->SetParameterName("energyuncertainty",true);
+  fEnergyCmd->SetDefaultValue(true);
+  fEnergyCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+  
+  fLongitudinalPosCmd = new G4UIcmdWithABool("/MRPC/sig/PrimaryLongitudinalPosUncertainty",this);
+  fLongitudinalPosCmd->SetGuidance("Whether to consider the uncertainty of the primarty energy depo");
+  fLongitudinalPosCmd->SetParameterName("LongPosuncertainty",true);
+  fLongitudinalPosCmd->SetDefaultValue(true);
+  fLongitudinalPosCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+  
+  fAvalancheCmd = new G4UIcmdWithABool("/MRPC/sig/AvalancheUncertainty",this);
+  fAvalancheCmd->SetGuidance("Whether to consider the uncertainty of the primarty energy depo");
+  fAvalancheCmd->SetParameterName("avaluncertainty",true);
+  fAvalancheCmd->SetDefaultValue(true);
+  fAvalancheCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+  
+  fWeightingFieldCmd = new G4UIcmdWithABool("/MRPC/sig/WeightingFieldUncertainty",this);
+  fWeightingFieldCmd->SetGuidance("Whether to consider the uncertainty of the primarty energy depo");
+  fWeightingFieldCmd->SetParameterName("avaluncertainty",true);
+  fWeightingFieldCmd->SetDefaultValue(true);
+  fWeightingFieldCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+  
+  fUncertValueCmd = new G4UIcmdWith3VectorAndUnit("/MRPC/sig/UncertSetting",this);
+  fUncertValueCmd->SetGuidance("Define UncertValue");
+  fUncertValueCmd->SetParameterName("totaldepenergy","Nbofstep","null",true);
+  fUncertValueCmd->SetDefaultValue(G4ThreeVector(999,999,999)); 
+  fUncertValueCmd->SetUnitCategory("Length");
+  fUncertValueCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 }
 
@@ -107,6 +141,11 @@ MRPCSignalMessenger::~MRPCSignalMessenger()
   delete fPointStepCmd;
   delete fRealVoltageCmd;
   delete fGastypeCmd;
+  delete fEnergyCmd;
+  delete fLongitudinalPosCmd;
+  delete fAvalancheCmd;
+  delete fWeightingFieldCmd;
+  delete fUncertValueCmd;
 }
 
 
@@ -124,4 +163,10 @@ void MRPCSignalMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
   if(command == fAmplitudeCmd) fSignal->SetAmplitude(fTau1Cmd->GetNewDoubleValue(newValue));
   if(command == fDrawPlotCmd) fSignal->SetDrawPlot(fDrawPlotCmd->GetNewIntValue(newValue));
   if(command == fRealVoltageCmd) fSignal->SetRealVoltage(fRealVoltageCmd->GetNewDoubleValue(newValue));
+  if(command == fEnergyCmd) fSignal->SetUncertaintyEnergyFlag(fEnergyCmd->GetNewBoolValue(newValue));
+  if(command == fLongitudinalPosCmd) fSignal->SetUncertaintyLongPosFlag(fLongitudinalPosCmd->GetNewBoolValue(newValue));
+  if(command == fAvalancheCmd) fSignal->SetUncertaintyAvalancheFlag(fAvalancheCmd->GetNewBoolValue(newValue));
+  if(command == fWeightingFieldCmd) fSignal->SetUncertaintyWeightingFieldFlag(fWeightingFieldCmd->GetNewBoolValue(newValue));
+  if(command == fUncertValueCmd) fSignal->SetUncertaintyValue(fUncertValueCmd->GetNew3VectorValue(newValue));
+  
 }

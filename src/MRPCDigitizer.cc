@@ -33,7 +33,7 @@ void MRPCDigitizer::Digitize(){
   G4int hcID = digiMan->GetHitsCollectionID(m_hitsColName);
 
   MRPCTrackerHitsCollection* hitsCollection = (MRPCTrackerHitsCollection*)(digiMan->GetHitsCollection(hcID));
-
+ if(hitsCollection->entries()>0){
   Signal->Initialize(Gapsize,eventID);
   bool ifOverThreshold=Signal->CalculateSignal(hitsCollection);
   // if(ifOverThreshold){
@@ -50,14 +50,8 @@ void MRPCDigitizer::Digitize(){
     digit->SetIfOverThreshold(ifOverThreshold);
     digit->SetNbofpointAboveThreshold(Signal->GetNbofpointAboveThreshold());
     digit->SetPointTimeStep(Signal->GetPointTimeStep());
-    // G4cout<<"Digitizer "<<Signal->GetPointTimeStep()<<G4endl;
     digitsCollection->insert(digit);  
     StoreDigiCollection(digitsCollection);
-  // }
-  // G4int nEntries = hitsCollection->entries();
-  // // G4cout<<"Hits entries "<<nEntries<<G4endl;
-  // for(G4int itr=0;itr<nEntries;itr++){
-  //   G4cout<<"hits "<<(*hitsCollection)[itr]->GetTrackID()<<" "<<(*hitsCollection)[itr]->GetGapID()<<" "<<(*hitsCollection)[itr]->GetPreStripID()<<" "<<(*hitsCollection)[itr]->GetPostStripID()<<" "<<(*hitsCollection)[itr]->GetEdep()<<(*hitsCollection)[itr]->GetPrePos()<<" "<<(*hitsCollection)[itr]->GetPrePosWithRespectToStrip()<<" "<<(*hitsCollection)[itr]->GetPostPos()<<G4endl;
-
-  // }
+  }
+ 
 }

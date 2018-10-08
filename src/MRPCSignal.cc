@@ -32,7 +32,7 @@ MRPCSignal::MRPCSignal()
   AverageIonEnergy=23.e-6;//Mev
   pi=3.1415926;
   elec=1.6e-19;
- 
+  LightSpeed=3e8;
   //Gas constant
   Alpha=161.2;//144800./1000;// mm^-1
   Eta=3.667;//5013./1000;// mm^-
@@ -57,7 +57,10 @@ MRPCSignal::MRPCSignal()
 
   //Bool
   doDiff=false;
-
+  EnergyFlag=true;
+  LongPosFlag=true;
+  AvalancheFlag=true;
+  
   m_signalMessenger=new MRPCSignalMessenger(this);
 
   Tau1=0.5;Tau2=1.5;Amplitude=45;
@@ -141,21 +144,87 @@ void MRPCSignal::ResetSignal(){
 
 bool MRPCSignal::CalculateSignal(MRPCTrackerHitsCollection* hitsCollection){
   //main function of this class. Run for every event. Get the hits information can create the waveform
-  G4int nentries=hitsCollection->entries();
-  TruthTime=9999;
-  for(G4int itr=0;itr<nentries;itr++){
-	 G4double primaryelectrons=round((*hitsCollection)[itr]->GetEdep()/AverageIonEnergy);//get int from double, used as round
-
-    if(primaryelectrons==0) continue;
-    if(TruthTime>9990) TruthTime=(*hitsCollection)[itr]->GetLocalDepTime();
-    Avalanche((*hitsCollection)[itr]->GetGapID(),(*hitsCollection)[itr]->GetPrePosWithRespectToStrip(),(*hitsCollection)[itr]->GetLocalDepTime()-TruthTime,primaryelectrons);
+  if(!EnergyFlag&&!LongPosFlag&&!AvalancheFlag){
+  	 TruthTime=0;
+  	 G4double stepenergy=FixedTotalEnergy/(G4double)FixedNbofstep;
+  	 G4double steplength=Gapsize.x()*Gapsize.z()/(G4double)FixedNbofstep;
+	 // G4cout<<"stepenergy="<<round(stepenergy/AverageIonEnergy)<<G4endl;
+  	 for(G4int itr=0;itr<FixedNbofstep;itr++){
+  		G4double GapID=(itr*steplength)/FixedNbofstep;
+  		G4double poszwithrespect=itr*steplength-GapID*Gapsize.z();
+  		G4double thisstarttime=(GapID*(Gapsize.y()+Gapsize.z())+poszwithrespect)/LightSpeed*1e6;//ns
+  		AvalancheWithoutUncertainty(poszwithrespect,thisstarttime,round(stepenergy/AverageIonEnergy));
+  	 }
   }
+  
+  if(EnergyFlag&&!LongPosFlag&&!AvalancheFlag){
+  	 TruthTime=0;
+	 G4double tmptotalenergy=0;
+	 G4int nentries=hitsCollection->entries();
+	 for(G4int itr=0;itr<nentries;itr++)
+		tmptotalenergy+=(*hitsCollection)[itr]->GetEdep();
+  	 G4double stepenergy=tmptotalenergy/(G4double)FixedNbofstep;
+  	 G4double steplength=Gapsize.x()*Gapsize.z()/(G4double)FixedNbofstep;
+	 // G4cout<<"stepenergy="<<round(stepenergy/AverageIonEnergy)<<G4endl;
+  	 for(G4int itr=0;itr<FixedNbofstep;itr++){
+  		G4double GapID=(itr*steplength)/FixedNbofstep;
+  		G4double poszwithrespect=itr*steplength-GapID*Gapsize.z();
+  		G4double thisstarttime=(GapID*(Gapsize.y()+Gapsize.z())+poszwithrespect)/LightSpeed*1e6;//ns
+  		AvalancheWithoutUncertainty(poszwithrespect,thisstarttime,round(stepenergy/AverageIonEnergy));
+  	 }
+  }
+
+  if(EnergyFlag&&LongPosFlag&&!AvalancheFlag){
+	 G4int nentries=hitsCollection->entries();
+	 TruthTime=9999;
+	 for(G4int itr=0;itr<nentries;itr++){
+		G4double primaryelectrons=round((*hitsCollection)[itr]->GetEdep()/AverageIonEnergy);//get int from double, used as round
+		if(primaryelectrons==0) continue;
+		// G4cout<<"stepenergy="<<primaryelectrons<<G4endl;
+		AvalancheWithoutUncertainty((*hitsCollection)[itr]->GetPrePosWithRespectToStrip().z(),(*hitsCollection)[itr]->GetLocalDepTime()-TruthTime,primaryelectrons);
+	 }
+  }
+
+  if(EnergyFlag&&LongPosFlag&&AvalancheFlag){  
+	 G4int nentries=hitsCollection->entries();
+	 TruthTime=9999;
+	 for(G4int itr=0;itr<nentries;itr++){
+		G4double primaryelectrons=round((*hitsCollection)[itr]->GetEdep()/AverageIonEnergy);//get int from double, used as round
+
+		if(primaryelectrons==0) continue;
+		// G4cout<<"stepenergy="<<primaryelectrons<<G4endl;
+		Avalanche((*hitsCollection)[itr]->GetGapID(),(*hitsCollection)[itr]->GetPrePosWithRespectToStrip(),(*hitsCollection)[itr]->GetLocalDepTime()-TruthTime,primaryelectrons);
+	 }
+  }
+  
+  if(!EnergyFlag&&LongPosFlag&&!AvalancheFlag){
+	 G4int thisNbofstep=0;
+	 TruthTime=9999;
+	 for(G4int itr=0;itr<hitsCollection->entries();itr++){
+		G4double primaryelectrons=round((*hitsCollection)[itr]->GetEdep()/AverageIonEnergy);//get int from double, used as round
+		if(primaryelectrons>0) thisNbofstep++;
+	 }
+ 	 G4double stepenergy=FixedTotalEnergy/(G4double)thisNbofstep;
+	 // G4cout<<"stepenergy="<<round(stepenergy/AverageIonEnergy)<<G4endl;
+	 for(G4int itr=0;itr<hitsCollection->entries();itr++){
+		G4double primaryelectrons=round((*hitsCollection)[itr]->GetEdep()/AverageIonEnergy);//get int from double, used as round
+		if(primaryelectrons==0) continue;
+		if(TruthTime>9990) TruthTime=(*hitsCollection)[itr]->GetLocalDepTime();
+		AvalancheWithoutUncertainty((*hitsCollection)[itr]->GetPrePosWithRespectToStrip().z(),(*hitsCollection)[itr]->GetLocalDepTime()-TruthTime,round(stepenergy/AverageIonEnergy));
+	 }
+	 TruthTime=0;
+  }
+
+
+  
+
+
  
   CalculateCurrent(); //Get the original current waveform(from)
 
   ElectronicsResponse();//Add electronics response to the original current.
   //ToT,threshold crosing time=ElectronicsResponse(Iwitht)
-  CalculateToT();//Calculate the ToT and judge whether the signal is overthreshold 
+  // CalculateToT();//Calculate the ToT and judge whether the signal is overthreshold 
   CalculateWaveForm(); //calculate the waveform.
   return OverThreshold;
 }
@@ -164,6 +233,7 @@ bool MRPCSignal::CalculateSignal(MRPCTrackerHitsCollection* hitsCollection){
 void MRPCSignal::CalculateCurrent(){
   for(Int_t stepi=0;stepi<NbWithTime->GetNbinsX();stepi++)
     IWithTime->SetBinContent(1+stepi,NbWithTime->GetBinContent(1+stepi)*WeightE*Velocity*elec*1e12);//mA
+  TotalInducedQ=IWithTime->Integral()*IWithTime->GetBinWidth(1);//pC
   if(DrawPlot){   
   TCanvas *c1=new TCanvas("c1","c1",0,0,1300,600);
   // TPad *pad1 = new TPad("pad1","",0,0,1,1);
@@ -228,12 +298,11 @@ void MRPCSignal::CalculateToT(){
   //time:ns,q:fC,length:mm
   G4int lead=GetLeadingEdge(ResponseIWithTime,WaveMaxValue*ThresholdPer);//see if the signal is overshold
   //if(Peak.second<0.3*WaveMaxValue) OverThreshold=false;
-  TotalInducedQ=IWithTime->Integral()*IWithTime->GetBinWidth(1);//pC
-
+  
   if(OverThreshold){
     // std::pair<G4int,G4double> trail=GetTrailingEdge(ResponseIWithTime,WaveMaxValue*ThresholdPer);
     G4int trail=GetTrailingEdge(ResponseIWithTime,WaveMaxValue*ThresholdPer);
-    LeadTime=ResponseIWithTime->GetBinCenter(lead);//ns lead.first
+    LeadTime=ResponseIWithTime->GetBinCenter(lead)+TruthTime;//ns lead.first
     ToT=ResponseIWithTime->GetBinCenter(trail)-ResponseIWithTime->GetBinCenter(lead);//ns .first
 //    TotalInducedQ=IWithTime->Integral()*IWithTime->GetBinWidth(1);//pC
     // G4cout<<"CalculateToT Leadtime "<<LeadTime<<" ToTstart "<<ResponseIWithTime->GetBinCenter(lead.first)<<" ToTend "<<ResponseIWithTime->GetBinCenter(trail.first)<<" ToT "<<ToT<<G4endl;
@@ -311,7 +380,7 @@ void MRPCSignal::CalculateToT(){
 void MRPCSignal::CalculateWaveForm(){
   gRandom->SetSeed();
   G4int randomtime=Peak.first+round(gRandom->Uniform(-PointStep/2,PointStep/2));
-  ExperimentsPeakTime=ResponseIWithTime->GetBinCenter(randomtime);
+  ExperimentsPeakTime=ResponseIWithTime->GetBinCenter(randomtime)+TruthTime;
   // G4cout<<"startrandom time= "<<randomtime<<" Pointstep= "<<PointStep<<G4endl;
   PointTimeStep=ResponseIWithTime->GetBinCenter(randomtime-PointStep)-ResponseIWithTime->GetBinCenter(randomtime-2*PointStep);
   // for(Int_t i=0;i<PointStep*10;i++)
@@ -344,11 +413,11 @@ void MRPCSignal::Avalanche(G4int gapID, G4ThreeVector PosWithRespectToStrip,G4do
   if(totalNbofstep>0){
     
     G4double IniTimeBin=NbWithTime->FindBin(StartTime);
-	 // G4cout<<"time to electrode"<<timetoelectrode<<" totalNbofstep "<<totalNbofstep<<" max "<<MaxScale<<" initimebin "<<IniTimeBin<<" starttime "<<StartTime<<G4endl;
+   
     //Gain
     G4double naverage=exp(EffAlpha*ZStep);
     G4double scompare=TownsendK*(naverage-1)/(naverage-TownsendK); //Sampling for avalanche
-    G4int Nbofele=PrimaryElectrons;
+    G4double Nbofele=PrimaryElectrons;
 
     TH1D *Nbpereventwithtime=new TH1D("Neveryelectrontime","Nbof electron with time",NbWithTime->GetNbinsX(),NbWithTime->GetXaxis()->GetXmin(),NbWithTime->GetXaxis()->GetXmax());
 
@@ -392,7 +461,7 @@ void MRPCSignal::Avalanche(G4int gapID, G4ThreeVector PosWithRespectToStrip,G4do
       G4double startbin=timemean/TimeStep;
       // G4cout<<"startbin "<<startbin<<" total "<<totalNbofstep<<G4endl;
       for(Int_t stepi=startbin;stepi<totalNbofstep+1;stepi++)
-	NbWithTime->SetBinContent(IniTimeBin+stepi,NbWithTime->GetBinContent(IniTimeBin+stepi)-Nbpereventwithtime->GetBinContent(IniTimeBin+stepi));//update the Nbofele
+		  NbWithTime->SetBinContent(IniTimeBin+stepi,NbWithTime->GetBinContent(IniTimeBin+stepi)-Nbpereventwithtime->GetBinContent(IniTimeBin+stepi));//update the Nbofele
       // for(Int_t stepi=1;stepi<totalNbofstep;stepi++){ 
       //   G4double bincontent,arrivedN=0;
       //   if(!AllArrived){
@@ -428,8 +497,28 @@ void MRPCSignal::Avalanche(G4int gapID, G4ThreeVector PosWithRespectToStrip,G4do
   }//totalNbofstep>0
 }
 
+void MRPCSignal::AvalancheWithoutUncertainty(G4double posz,G4double StartTime,G4int PrimaryElectrons){
+  G4double timetoelectrode=(Gapsize.z()-posz)/Velocity;
+  Double_t totalNbofstep=timetoelectrode/TimeStep;
+  
+  if(totalNbofstep>0){
+	 G4double IniTimeBin=NbWithTime->FindBin(StartTime);
+	 NbWithTime->SetBinContent(IniTimeBin,NbWithTime->GetBinContent(IniTimeBin)+PrimaryElectrons);
+	 G4double naverage=exp(EffAlpha*ZStep);
+	 
+	 G4double Nbofele=PrimaryElectrons;
+	 for(Int_t stepi=1;stepi<totalNbofstep;stepi++){
+		if(Nbofele<SpaceChargeThre){
+		  Nbofele=Nbofele*naverage;
+		  if(Nbofele>SpaceChargeThre) Nbofele=SpaceChargeThre;
+		}
+		else Nbofele=SpaceChargeThre;
+		NbWithTime->SetBinContent(IniTimeBin+stepi,NbWithTime->GetBinContent(IniTimeBin+stepi)+Nbofele);
+	 }
+  }	
+}
 
-
+ 
 std::vector<std::pair<G4int,G4double> > MRPCSignal::GetLeadingLength(TH1D* hist,G4double percentofMax){
   
   std::pair<G4int,G4double> leadingstart,leadingend;

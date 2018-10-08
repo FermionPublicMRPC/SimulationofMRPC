@@ -16,30 +16,31 @@
 #Nbofgap Platethickness gapthickness
 /MRPC/Phy/Physics pai
 
+
 #/MRPC/gene/BeamType proton
 /MRPC/gene/GunPos 0 0 56.442 mm
 /MRPC/gene/GunDir 0 0 -1 mm
-/MRPC/gene/BeamMomentum 800 
+/MRPC/gene/BeamMomentum 800
 
 #/MRPC/sig/whichgasmixture gas1
 /MRPC/sig/AverageIonEnergy 30.e-6 #MeV
 /MRPC/sig/NbofstepsInAGap 300
 /MRPC/sig/NbofPointAroundThre 18
-/MRPC/sig/ThresholdPer 0.05
-/MRPC/sig/NoisePer 0.0
-/MRPC/sig/Tau1 0.15
+/MRPC/sig/ThresholdPer 0.02
+/MRPC/sig/NoisePer 0.003
+/MRPC/sig/Tau1 0.2
 /MRPC/sig/Tau2 1.
-/MRPC/sig/Amplitude 2.5
+/MRPC/sig/Amplitude 0.11
 /MRPC/sig/DrawPlot 0
-/MRPC/sig/TimeIntervalAroundThre 110 #ps
-/MRPC/sig/RealVoltage 8.25 #kV
+/MRPC/sig/TimeIntervalAroundThre 100 #ps
+/MRPC/sig/RealVoltage 8.2 #kV
 
 /run/initialize
 /MRPC/det/update
 
 /MRPC/Rec/doWrite 1
-
+/MRPC/Rec/filename GeantData.root
 
 #/gun/particle mu-
 #/gun/energy 4 GeV
-/run/beamOn 2000
+/run/beamOn 5

@@ -1,7 +1,9 @@
+#Setting verbose
 /run/verbose 0
 /event/verbose 0
 /tracking/verbose 0
 
+#Geometry
 /MRPC/det/Gapsize 100 100 thickthick mm
 /MRPC/det/Glasssize 100 100 0.5 mm
 /MRPC/det/Honeysize 100 100 7.5 mm
@@ -11,17 +13,20 @@
 /MRPC/det/NumberOfGapinAChamber gapNb
 /MRPC/det/StepMax 0.05 mm
 /MRPC/det/PitchWidth 10 mm
-
 /MRPC/dig/Geosize gapNb 0.5 thickthick mm
 #Nbofgap Platethickness gapthickness
+
+
+#PhysicsList
 /MRPC/Phy/Physics pai
 
-
+#PrimaryGenerator
 #/MRPC/gene/BeamType proton
 /MRPC/gene/GunPos 0 0 56.442 mm
 /MRPC/gene/GunDir 0 0 -1 mm
 /MRPC/gene/BeamMomentum 800
 
+#Signal: signal inducing
 #/MRPC/sig/whichgasmixture gas1
 /MRPC/sig/AverageIonEnergy 30.e-6 #MeV
 /MRPC/sig/NbofstepsInAGap 300
@@ -34,6 +39,13 @@
 /MRPC/sig/DrawPlot 0
 /MRPC/sig/TimeIntervalAroundThre intervinterv #ps
 /MRPC/sig/RealVoltage voltagevoltage #kV
+
+#If all the uncertainties are commented, then the code considers all the uncertainties. If uncomment any of the uncertainty, which means set the value to be 0, then this means the code does not consider this uncertainty.
+#/MRPC/sig/PrimaryEnergyUncertainty 0
+#/MRPC/sig/PrimaryLongitudinalPosUncertainty 0
+#/MRPC/sig/AvalancheUncertainty 0
+#/MRPC/sig/WeightingFieldUncertainty 0
+#/MRPC/sig/UncertSetting 0.0011 15 999 mm #MeV
 
 /run/initialize
 /MRPC/det/update
