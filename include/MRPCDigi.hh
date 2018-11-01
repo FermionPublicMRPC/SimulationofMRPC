@@ -34,7 +34,7 @@ public:
   inline void SetToT(G4double value)   {ToT = value;};
   inline void SetWavePeak(G4double value)   {WavePeak = value;};
   inline void SetEdep(G4double value)   {Edep = value;};
-  inline void SetInducedI(std::vector<G4double> value) {InducedI=value;};
+
   inline void SetInducedQ(std::vector<G4double> value) {InducedQ=value;};
   inline void SetTotalInducedQ(G4double value) {TotalInducedQ=value;};
   inline void SetInducedQAroundThre(std::vector<G4double> value) {InducedQAroundThre=value;};
@@ -42,6 +42,12 @@ public:
   inline void SetIfOverThreshold(bool value) {IfOverThreshold=value;};
   inline void SetNbofpointAboveThreshold(G4int value) {NbofpointAboveThreshold=value;};
   inline void SetParticleName(G4String value) {particleName=value;};
+
+  inline void SetOriginalPeakTime(G4double value) {OriginalPeakTime=value;};
+  inline void SetInducedI(std::vector<G4double> value) {InducedI=value;};
+  inline void SetWriteOriginalFlag(G4int value) {OriginalFlag=value;};
+  inline void SetOriginalPointTimeStep(G4double value) {OriginalTimeStep=value;};
+  
   inline G4int GetStripID() {return StripID;};
   inline G4double GetLeadTime() {return LeadTime;};
   inline G4double GetTruthTime() {return TruthTime;};
@@ -51,7 +57,7 @@ public:
   inline G4double GetToT() {return ToT;};
   inline G4double GetWavePeak() {return WavePeak;};
   inline G4double GetEdep() {return Edep;};
-  inline std::vector<G4double> GetInducedI() {return InducedI;};
+
   inline std::vector<G4double> GetInducedQ() {return InducedQ;};
   inline G4double GetTotalInducedQ() {return TotalInducedQ;}
   inline G4int GetNbofpointAboveThreshold() {return NbofpointAboveThreshold;};
@@ -59,9 +65,15 @@ public:
   inline std::vector<G4double> GetInducedQAroundThre(){return InducedQAroundThre;};
   inline G4String GetParticleName() {return particleName;};
   inline bool GetIfOverThreshold(){return IfOverThreshold;};
+
+  inline G4double GetOriginalPeakTime() {return OriginalPeakTime;};
+  inline std::vector<G4double> GetInducedI() {return InducedI;};
+  inline G4int GetWriteOriginalFlag() {return OriginalFlag;};
+  inline G4double GetOriginalPointTimeStep() {return OriginalTimeStep;};
+  
 private:
-  G4int StripID,NbofpointAboveThreshold;
-  G4double LeadTime,TrailTime,Edep,TotalInducedQ,TruthTime,ToT,WavePeak,ArrivedTime,PeakTime,PointTimeStep;
+  G4int StripID,NbofpointAboveThreshold,OriginalFlag;
+  G4double LeadTime,TrailTime,Edep,TotalInducedQ,TruthTime,ToT,WavePeak,ArrivedTime,PeakTime,PointTimeStep,OriginalPeakTime,OriginalTimeStep;
   bool IfOverThreshold;
   G4String particleName;
   std::vector<G4double> InducedI,InducedQ;

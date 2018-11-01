@@ -83,6 +83,12 @@ void MRPCRecorder::RecordDigitinROOT(MRPCDigitsCollection* digitsCollection){
 		  particlename=2;
 		else
 		  particlename=0;
+		if((*digitsCollection)[itr]->GetWriteOriginalFlag()==1){
+		  originalpointtimestep=(*digitsCollection)[itr]->GetOriginalPointTimeStep();
+		  originalpeaktime=(*digitsCollection)[itr]->GetOriginalPeakTime();
+		  originalindi=(*digitsCollection)[itr]->GetInducedI();
+		}
+		
       Walk->Fill(totalindq,leadtime);
     }
     // G4cout<<"nDigits "<<nDigits<<" leadtime "<<leadtime<<" ToT "<<tot<<G4endl;
@@ -167,6 +173,9 @@ void MRPCRecorder::SetupTreeForDigit(){
   treed->Branch("overthre",&overthre);
   treed->Branch("particlename",&particlename); 
 //  treed->Branch("nbofpoint",&nbofpoint);
+  treed->Branch("originalpeaktime",&originalpeaktime);//ns
+  treed->Branch("originalindi",&originalindi);
+  treed->Branch("originalpointtimestep",&originalpointtimestep);
 
 }
 

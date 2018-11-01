@@ -35,8 +35,8 @@ private:
   TTree* treed,*treeh;
   std::vector<G4int> track,strip,pdg;
   std::vector<G4double> px,py,pz,dep;
-  std::vector<G4double> indq;
-  G4double leadtime,totalindq,truthtime,tot,wavepeak,arrivedtime,peaktime,pointtimestep;
+  std::vector<G4double> indq,originalindi;
+  G4double leadtime,totalindq,truthtime,tot,wavepeak,arrivedtime,peaktime,pointtimestep,originalpeaktime,originalpointtimestep;
   G4int recordflag,nbofpoint,particlename;
   bool overthre;
   MRPCRecorderMessenger* m_recorderMessenger;

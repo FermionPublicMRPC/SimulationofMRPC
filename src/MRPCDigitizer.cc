@@ -50,6 +50,14 @@ void MRPCDigitizer::Digitize(){
     digit->SetIfOverThreshold(ifOverThreshold);
     digit->SetNbofpointAboveThreshold(Signal->GetNbofpointAboveThreshold());
     digit->SetPointTimeStep(Signal->GetPointTimeStep());
+	 digit->SetOriginalPointTimeStep(Signal->GetOriginalPointTimeStep());
+	 digit->SetWriteOriginalFlag(Signal->GetOriginalFlag());
+	 if(Signal->GetOriginalFlag()==1){
+		digit->SetOriginalPeakTime(Signal->GetOriginalPeakTime());
+		digit->SetInducedI(Signal->GetOriginalIAroundThre());
+		digit->SetOriginalPointTimeStep(Signal->GetOriginalPointTimeStep());
+	 }
+	 
     digitsCollection->insert(digit);  
     StoreDigiCollection(digitsCollection);
   }

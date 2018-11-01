@@ -16,15 +16,6 @@ MRPCSignalMessenger::MRPCSignalMessenger(MRPCSignal *sig)
   fSigDirectory = new G4UIdirectory("/MRPC/sig/");
   fSigDirectory->SetGuidance("Signal control");
 
-  // fAlphaCmd = new G4UIcmdWithADouble("/MRPC/sig/alpha",this);
-  // fAlphaCmd->SetGuidance("Define Alpha");
-  // fAlphaCmd->SetParameterName("Alpha",false);
-  // fAlphaCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-
-  // fEtaCmd = new G4UIcmdWithADouble("/MRPC/sig/eta",this);
-  // fEtaCmd->SetGuidance("Define Eta");
-  // fEtaCmd->SetParameterName("Eta",false);
-  // fEtaCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
   fGastypeCmd = new G4UIcmdWithAString("/MRPC/sig/whichgasmixture",this);
   fGastypeCmd->SetGuidance("Define Gastype");
   fGastypeCmd->SetParameterName("Gastype",true);
@@ -63,23 +54,42 @@ MRPCSignalMessenger::MRPCSignalMessenger(MRPCSignal *sig)
   fNoiseCmd->SetDefaultValue(0.01);
   fNoiseCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  fTau1Cmd = new G4UIcmdWithADouble("/MRPC/sig/Tau1",this);
-  fTau1Cmd->SetGuidance("Define Tau1");
-  fTau1Cmd->SetParameterName("Tau1",true);
-  fTau1Cmd->SetDefaultValue(0.01);
-  fTau1Cmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  fTau2Cmd = new G4UIcmdWithADouble("/MRPC/sig/Tau2",this);
-  fTau2Cmd->SetGuidance("Define Tau2");
-  fTau2Cmd->SetParameterName("Tau2",true);
-  fTau2Cmd->SetDefaultValue(0.01);
-  fTau2Cmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+  fFelectronicsParaCmd = new G4UIcmdWith3VectorAndUnit("/MRPC/sig/FElectronicsPara",this);
+  fFelectronicsParaCmd->SetGuidance("Define FelectronicsPara:tau1,tau2,A");
+  fFelectronicsParaCmd->SetParameterName("tau1","tau2","A",false);
+  fFelectronicsParaCmd->SetUnitCategory("Length");
+  fFelectronicsParaCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  fAmplitudeCmd = new G4UIcmdWithADouble("/MRPC/sig/Amplitude",this);
-  fAmplitudeCmd->SetGuidance("Define Amplitude");
-  fAmplitudeCmd->SetParameterName("Amplitude",true);
-  fAmplitudeCmd->SetDefaultValue(0.01);
-  fAmplitudeCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+  fElectronicsRangeCmd = new G4UIcmdWithADouble("/MRPC/sig/ElectronicsRange",this);
+  fElectronicsRangeCmd->SetGuidance("Define ElectronicsRange");
+  fElectronicsRangeCmd->SetParameterName("ElectronicsRange",true);
+  fElectronicsRangeCmd->SetDefaultValue(12);
+  fElectronicsRangeCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+  fSpacechargethreCmd = new G4UIcmdWithADouble("/MRPC/sig/Spacechargethre",this);
+  fSpacechargethreCmd->SetGuidance("Define Spacechargethre");
+  fSpacechargethreCmd->SetParameterName("Spacechargethre",true);
+  fSpacechargethreCmd->SetDefaultValue(1e6);
+  fSpacechargethreCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+  // fTau1Cmd = new G4UIcmdWithADouble("/MRPC/sig/Tau1",this);
+  // fTau1Cmd->SetGuidance("Define Tau1");
+  // fTau1Cmd->SetParameterName("Tau1",true);
+  // fTau1Cmd->SetDefaultValue(0.01);
+  // fTau1Cmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+  // fTau2Cmd = new G4UIcmdWithADouble("/MRPC/sig/Tau2",this);
+  // fTau2Cmd->SetGuidance("Define Tau2");
+  // fTau2Cmd->SetParameterName("Tau2",true);
+  // fTau2Cmd->SetDefaultValue(0.01);
+  // fTau2Cmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+  // fAmplitudeCmd = new G4UIcmdWithADouble("/MRPC/sig/Amplitude",this);
+  // fAmplitudeCmd->SetGuidance("Define Amplitude");
+  // fAmplitudeCmd->SetParameterName("Amplitude",true);
+  // fAmplitudeCmd->SetDefaultValue(0.01);
+  // fAmplitudeCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
   fDrawPlotCmd = new G4UIcmdWithAnInteger("/MRPC/sig/DrawPlot",this);
   fDrawPlotCmd->SetParameterName("Define DrawPlot",true);
@@ -90,6 +100,13 @@ MRPCSignalMessenger::MRPCSignalMessenger(MRPCSignal *sig)
   fRealVoltageCmd->SetGuidance("Define RealVoltage");
   fRealVoltageCmd->SetParameterName("RealVoltage",false);
   fRealVoltageCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+
+  fRandomPeakCmd = new G4UIcmdWithABool("/MRPC/sig/FindRandomPeak",this);
+  fRandomPeakCmd->SetGuidance("Whether to find the peak with an uncertainty");
+  fRandomPeakCmd->SetParameterName("randompeak",true);
+  fRandomPeakCmd->SetDefaultValue(true);
+  fRandomPeakCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
   
   fEnergyCmd = new G4UIcmdWithABool("/MRPC/sig/PrimaryEnergyUncertainty",this);
   fEnergyCmd->SetGuidance("Whether to consider the uncertainty of the primarty energy depo");
@@ -118,8 +135,8 @@ MRPCSignalMessenger::MRPCSignalMessenger(MRPCSignal *sig)
   
   fUncertValueCmd = new G4UIcmdWith3VectorAndUnit("/MRPC/sig/UncertSetting",this);
   fUncertValueCmd->SetGuidance("Define UncertValue");
-  fUncertValueCmd->SetParameterName("totaldepenergy","Nbofstep","null",true);
-  fUncertValueCmd->SetDefaultValue(G4ThreeVector(999,999,999)); 
+  fUncertValueCmd->SetParameterName("totaldepenergy","Nbofstep","WhetherRecordOriginal",true);
+  fUncertValueCmd->SetDefaultValue(G4ThreeVector(999,999,0)); 
   fUncertValueCmd->SetUnitCategory("Length");
   fUncertValueCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
@@ -127,9 +144,12 @@ MRPCSignalMessenger::MRPCSignalMessenger(MRPCSignal *sig)
 
 MRPCSignalMessenger::~MRPCSignalMessenger()
 {
-  delete fTau1Cmd;
-  delete fTau2Cmd;
-  delete fAmplitudeCmd;
+  // delete fTau1Cmd;
+  // delete fTau2Cmd;
+  // delete fAmplitudeCmd;
+  delete fFelectronicsParaCmd;
+  delete fElectronicsRangeCmd;
+  delete fSpacechargethreCmd;
   delete fDrawPlotCmd;
   delete fMRPCDirectory;
   delete fSigDirectory;
@@ -141,6 +161,7 @@ MRPCSignalMessenger::~MRPCSignalMessenger()
   delete fPointStepCmd;
   delete fRealVoltageCmd;
   delete fGastypeCmd;
+  delete fRandomPeakCmd;
   delete fEnergyCmd;
   delete fLongitudinalPosCmd;
   delete fAvalancheCmd;
@@ -158,11 +179,15 @@ void MRPCSignalMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
   if(command == fPointStepCmd) fSignal->SetTimeInterval(fPointStepCmd->GetNewDoubleValue(newValue));
   if(command == fThresholdCmd) fSignal->SetThresholdPer(fThresholdCmd->GetNewDoubleValue(newValue));
   if(command == fNoiseCmd) fSignal->SetNoisePer(fNoiseCmd->GetNewDoubleValue(newValue));
-  if(command == fTau1Cmd) fSignal->SetTau1(fTau1Cmd->GetNewDoubleValue(newValue));
-  if(command == fTau2Cmd) fSignal->SetTau2(fTau1Cmd->GetNewDoubleValue(newValue)); 
-  if(command == fAmplitudeCmd) fSignal->SetAmplitude(fTau1Cmd->GetNewDoubleValue(newValue));
+  if(command == fFelectronicsParaCmd) fSignal->SetElectronicsParameter(fFelectronicsParaCmd->GetNew3VectorValue(newValue));
+  if(command == fElectronicsRangeCmd) fSignal->SetElectronicsRange(fElectronicsRangeCmd->GetNewDoubleValue(newValue));
+  if(command == fSpacechargethreCmd) fSignal->SetSpaceChargeThre(fSpacechargethreCmd->GetNewDoubleValue(newValue));
+  // if(command == fTau1Cmd) fSignal->SetTau1(fTau1Cmd->GetNewDoubleValue(newValue));
+  // if(command == fTau2Cmd) fSignal->SetTau2(fTau1Cmd->GetNewDoubleValue(newValue)); 
+  // if(command == fAmplitudeCmd) fSignal->SetAmplitude(fTau1Cmd->GetNewDoubleValue(newValue));
   if(command == fDrawPlotCmd) fSignal->SetDrawPlot(fDrawPlotCmd->GetNewIntValue(newValue));
   if(command == fRealVoltageCmd) fSignal->SetRealVoltage(fRealVoltageCmd->GetNewDoubleValue(newValue));
+  if(command == fRandomPeakCmd) fSignal->SetRandomPeakFlag(fRandomPeakCmd->GetNewBoolValue(newValue));
   if(command == fEnergyCmd) fSignal->SetUncertaintyEnergyFlag(fEnergyCmd->GetNewBoolValue(newValue));
   if(command == fLongitudinalPosCmd) fSignal->SetUncertaintyLongPosFlag(fLongitudinalPosCmd->GetNewBoolValue(newValue));
   if(command == fAvalancheCmd) fSignal->SetUncertaintyAvalancheFlag(fAvalancheCmd->GetNewBoolValue(newValue));

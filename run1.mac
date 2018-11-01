@@ -28,29 +28,35 @@
 
 #Signal: signal inducing
 #/MRPC/sig/whichgasmixture gas1
-/MRPC/sig/AverageIonEnergy 30.e-6 #MeV
+/MRPC/sig/AverageIonEnergy 20.e-6 #MeV
 /MRPC/sig/NbofstepsInAGap 300
 /MRPC/sig/NbofPointAroundThre nbpointnbpoint
 /MRPC/sig/ThresholdPer threthre
 /MRPC/sig/NoisePer noisenoise
-/MRPC/sig/Tau1 tau1tau1
-/MRPC/sig/Tau2 tau2tau2
-/MRPC/sig/Amplitude ampliampli
-/MRPC/sig/DrawPlot 0
+/MRPC/sig/FElectronicsPara tau1tau1 tau2tau2 ampliampli mm
+/MRPC/sig/ElectronicsRange frange
+#/MRPC/sig/Tau1 tau1tau1
+#/MRPC/sig/Tau2 tau2tau2
+#/MRPC/sig/Amplitude ampliampli
+/MRPC/sig/DrawPlot drawplotflag
 /MRPC/sig/TimeIntervalAroundThre intervinterv #ps
+/MRPC/sig/Spacechargethre spacechargevalue
 /MRPC/sig/RealVoltage voltagevoltage #kV
 
 #If all the uncertainties are commented, then the code considers all the uncertainties. If uncomment any of the uncertainty, which means set the value to be 0, then this means the code does not consider this uncertainty.
+#/MRPC/sig/FindRandomPeak 0
 #/MRPC/sig/PrimaryEnergyUncertainty 0
 #/MRPC/sig/PrimaryLongitudinalPosUncertainty 0
 #/MRPC/sig/AvalancheUncertainty 0
 #/MRPC/sig/WeightingFieldUncertainty 0
+#total energy dep[MeV], Nbofstep, null
 #/MRPC/sig/UncertSetting 0.0011 15 999 mm #MeV
 
 /run/initialize
 /MRPC/det/update
 
 /MRPC/Rec/doWrite 1
+/MRPC/Rec/filename outfilename
 
 
 #/gun/particle mu-

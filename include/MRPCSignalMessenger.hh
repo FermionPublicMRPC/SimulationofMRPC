@@ -22,10 +22,11 @@ private:
   MRPCSignal*           fSignal;
   G4UIdirectory*           fMRPCDirectory;
   G4UIdirectory*           fSigDirectory;
-  G4UIcmdWithADouble* fAverageIonEnergyCmd,*fThresholdCmd,*fNoiseCmd,*fPointStepCmd,*fTau1Cmd,*fTau2Cmd,*fAmplitudeCmd,*fRealVoltageCmd;
+  G4UIcmdWithADouble* fAverageIonEnergyCmd,*fThresholdCmd,*fNoiseCmd,*fPointStepCmd,*fRealVoltageCmd,*fElectronicsRangeCmd,*fSpacechargethreCmd;//,*fTau1Cmd,*fTau2Cmd,*fAmplitudeCmd
   G4UIcmdWithAnInteger *fNbofstepsInAGapCmd,*fNbofPointAroundThreCmd,*fDrawPlotCmd;
   G4UIcmdWithAString* fGastypeCmd;
-  G4UIcmdWithABool* fEnergyCmd,*fLongitudinalPosCmd,*fAvalancheCmd,*fWeightingFieldCmd;
-  G4UIcmdWith3VectorAndUnit* fUncertValueCmd;
+  G4UIcmdWithABool* fEnergyCmd,*fLongitudinalPosCmd,*fAvalancheCmd,*fWeightingFieldCmd,*fRandomPeakCmd;
+  G4UIcmdWith3VectorAndUnit* fUncertValueCmd,*fFelectronicsParaCmd;
+  
 };
 #endif
